@@ -1,22 +1,26 @@
 import amqp from 'k6/x/amqp';
+import { randomBytes } from 'k6/crypto';
 var CONFIG = require('./config.js');
 
 export default function () {
-  const connString = CONFIG.connString;
-  const topic = CONFIG.topic;
+  const connString = __ENV.AMQP_CONN_STRING;
+  const topic = __ENV.AMQP_TOPIC;
 
   let sender = new amqp.Sender(connString,topic);
   sender.Connect();
   let receivers = [];
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 20; i++) {
     let receiver = new amqp.Receiver(connString, topic);
     receiver.Connect();
     receivers.push(receiver);
   }
 
-  sender.Send("extra-super brilliant message2");
+  sender.Send(new Uint32Array(randomBytes(128000)));
   receivers.forEach(receiver => {
-    console.log(receiver.Receive());
+    receiver.Receive();
+  });
+
+  receivers.forEach(receiver => {
     receiver.Disconnect();
   });
 

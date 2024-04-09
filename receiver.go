@@ -95,7 +95,7 @@ func (receiver *receiver) Disconnect() {
 	receiver.cancel()
 }
 
-func (r *receiver) Receive() string {
+func (r *receiver) Receive() (err error) {
 	rt := r.vu.Runtime()
 
 	r.checkConnected()
@@ -104,7 +104,7 @@ func (r *receiver) Receive() string {
 
 	// receive the message
 	msg, err := r.receiver.Receive(r.ctx, nil)
-	if err != nil {
+	if err != nil || msg == nil {
 		common.Throw(rt, fmt.Errorf("Failed to receive amqp message: %v", err))
 	}
 
@@ -116,7 +116,11 @@ func (r *receiver) Receive() string {
 	// report stats
 	defer func() {
 		now := time.Now()
-		r.reportStats(r.metrics.ReceiveMessageTiming, nil, now, metrics.D(now.Sub(startedAt)))
+		diff := now.Sub(startedAt)
+		if diff.Nanoseconds() > 0 {
+			r.reportStats(r.metrics.ReceiveMessageTiming, nil, now, metrics.D(diff))
+		}
+
 		r.reportStats(r.metrics.ReceivedBytes, nil, now, float64(len(msg.GetData())))
 		if err != nil {
 			r.reportStats(r.metrics.ReceiveMessageErrors, nil, now, 1)
@@ -125,7 +129,7 @@ func (r *receiver) Receive() string {
 		}
 	}()
 
-	return string(msg.GetData())
+	return
 }
 
 func (r *receiver) checkConnected() {
