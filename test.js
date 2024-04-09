@@ -1,6 +1,5 @@
 import amqp from 'k6/x/amqp';
 import { randomBytes } from 'k6/crypto';
-var CONFIG = require('./config.js');
 
 export default function () {
   const connString = __ENV.AMQP_CONN_STRING;
