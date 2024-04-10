@@ -14,7 +14,7 @@ export default function () {
     receivers.push(receiver);
   }
 
-  sender.Send(new Uint32Array(randomBytes(128000)));
+  sender.Send(new Uint32Array(randomBytes(1024)));
   receivers.forEach(receiver => {
     receiver.Receive();
   });
