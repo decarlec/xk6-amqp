@@ -35,10 +35,10 @@ func (a *AmqpAPI) sender(c goja.ConstructorCall) *goja.Object {
 	rt := a.vu.Runtime()
 
 	if uri == "" {
-		common.Throw(rt, errors.New("URI is required"))
+		common.Throw(rt, errors.New("uri is required"))
 	}
 	if topic == "" {
-		common.Throw(rt, errors.New("Topic is required"))
+		common.Throw(rt, errors.New("topic is required"))
 	}
 
 	sender := sender{
@@ -79,12 +79,12 @@ func (s *sender) Connect() {
 
 	s.session, err = s.conn.NewSession(s.ctx, nil)
 	if err != nil {
-		common.Throw(rt, fmt.Errorf("Failed to connect create amqp session: %v", err))
+		common.Throw(rt, fmt.Errorf("failed to connect create amqp session: %v", err))
 	}
 
 	s.sender, err = s.session.NewSender(s.ctx, s.topic, nil)
 	if err != nil {
-		common.Throw(rt, fmt.Errorf("Failed to create amqp sender: %v", err))
+		common.Throw(rt, fmt.Errorf("failed to create amqp sender: %v", err))
 	}
 }
 
@@ -114,7 +114,7 @@ func (s *sender) Send(message string) (err error) {
 	// send a message
 	err = s.sender.Send(s.ctx, amqp.NewMessage([]byte(message)), nil)
 	if err != nil {
-		common.Throw(rt, fmt.Errorf("Failed to send amqp message: %v", err))
+		common.Throw(rt, fmt.Errorf("failed to send amqp message: %v", err))
 	}
 
 	return

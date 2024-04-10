@@ -37,10 +37,10 @@ func (a *AmqpAPI) receiver(c goja.ConstructorCall) *goja.Object {
 	rt := a.vu.Runtime()
 
 	if uri == "" {
-		common.Throw(rt, errors.New("URI is required"))
+		common.Throw(rt, errors.New("uri is required"))
 	}
 	if topic == "" {
-		common.Throw(rt, errors.New("Topic is required"))
+		common.Throw(rt, errors.New("topic is required"))
 	}
 
 	receiver := receiver{
@@ -81,12 +81,12 @@ func (receiver *receiver) Connect() {
 
 	receiver.session, err = receiver.conn.NewSession(receiver.ctx, nil)
 	if err != nil {
-		common.Throw(rt, fmt.Errorf("Failed to connect create amqp session: %v", err))
+		common.Throw(rt, fmt.Errorf("failed to connect create amqp session: %v", err))
 	}
 
 	receiver.receiver, err = receiver.session.NewReceiver(receiver.ctx, receiver.topic, nil)
 	if err != nil {
-		common.Throw(rt, fmt.Errorf("Failed to create amqp receiver: %v", err))
+		common.Throw(rt, fmt.Errorf("failed to create amqp receiver: %v", err))
 	}
 }
 
@@ -105,12 +105,12 @@ func (r *receiver) Receive() (err error) {
 	// receive the message
 	msg, err := r.receiver.Receive(r.ctx, nil)
 	if err != nil || msg == nil {
-		common.Throw(rt, fmt.Errorf("Failed to receive amqp message: %v", err))
+		common.Throw(rt, fmt.Errorf("failed to receive amqp message: %v", err))
 	}
 
 	err = r.receiver.AcceptMessage(r.ctx, msg)
 	if err != nil {
-		common.Throw(rt, fmt.Errorf("Failed to accept amqp message: %v", err))
+		common.Throw(rt, fmt.Errorf("failed to accept amqp message: %v", err))
 	}
 
 	// report stats
