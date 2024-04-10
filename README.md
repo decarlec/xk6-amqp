@@ -1,6 +1,7 @@
 This is an xk6 extension for k6 that uses the amqp protocol.
 
 Usage:
+Example usage can be found in `test.js`
 
 To build:
 
